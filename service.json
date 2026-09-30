@@ -1,0 +1,57 @@
+{
+    "id": "analytics",
+    "name": "Google Analytics",
+    "version": "1.0.0",
+    "description": "Google Tag Manager / GA4 loading with Consent Mode v2, gated on an admin-editable toggle and production-only",
+    "author": {
+        "name": "Gavin Cox"
+    },
+    "license": "proprietary",
+
+    "requires": {
+        "osmium": ">=1.0.0",
+        "php": ">=8.1",
+        "services": []
+    },
+
+    "autoload": [
+        "models"
+    ],
+
+    "admin": {
+        "menu": {
+            "section": "Content",
+            "items": [
+                {
+                    "id": "analytics",
+                    "label": "Google Analytics",
+                    "icon": "bx bx-bar-chart-alt-2",
+                    "route": "admin/settings/analytics",
+                    "activePattern": "admin/settings/analytics",
+                    "role": null
+                }
+            ]
+        },
+        "routes": {
+            "admin/settings/analytics": {
+                "controller": "controllers/AnalyticsController.php",
+                "class": "Osmium\\Services\\Analytics\\Controllers\\AnalyticsController",
+                "method": "index",
+                "title": "Google Analytics"
+            }
+        }
+    },
+
+    "frontend": {
+        "themeBlocks": [
+            {
+                "hook": "head",
+                "file": "theme/analytics-headscript.phtml"
+            }
+        ]
+    },
+
+    "setup": {
+        "postInstallNote": "Disabled by default. A theme must call ServiceThemeBlocks::render('head', ['analytics' => ..., 'site' => $site]) in its <head> template before enabling this does anything visible."
+    }
+}

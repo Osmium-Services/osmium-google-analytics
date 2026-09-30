@@ -1,0 +1,76 @@
+<?php // Included via ServiceThemeBlocks::render('head', [...]) by a real theme's
+// own <head> template - see that class's doc comment. Expects $analytics
+// (this service's own config, e.g. ['enabled' => bool, 'gtmId' => string])
+// and $site (for the environment check) in the render context; $cookieConsent
+// is optional - a separate service's concern, degrades gracefully if absent.
+?>
+<?php
+$analyticsEnabled = $analytics['enabled'] ?? false;
+$isProduction = !\in_array($site['environment'] ?? '', ['dev', 'staging'], true);
+$shouldLoad = $analyticsEnabled && $isProduction; // GA4/GTM only on production
+?>
+<?php if ($shouldLoad): ?>
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <!-- Consent Mode v2: deny analytics storage by default, restore prior consent before GTM evaluates any tag -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied'
+        });
+        <?php if (isset($cookieConsent)): ?>
+                (function() {
+                    var m = document.cookie.match(/(?:^|; )<?php echo $cookieConsent['cookieName']; ?>=([^;]*)/);
+                    if (m && decodeURIComponent(m[1]) === 'accepted') {
+                        gtag('consent', 'update', {
+                            'analytics_storage': 'granted'
+                        });
+                    }
+                })();
+        <?php endif; ?>
+    </script>
+    <!-- Google Tag Manager (deferred until idle or first interaction) -->
+    <script>
+        (function(w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var loaded = false;
+
+            function load() {
+                if (loaded) {
+                    return;
+                }
+                loaded = true;
+                var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s),
+                    dl = l != 'dataLayer' ? '&l=' + l : '';
+                j.async = true;
+                j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                f.parentNode.insertBefore(j, f);
+                events.forEach(function(e) {
+                    w.removeEventListener(e, load);
+                });
+                clearTimeout(idleTimer);
+            }
+            var events = ['scroll', 'click', 'keydown', 'touchstart', 'mousemove'];
+            events.forEach(function(e) {
+                w.addEventListener(e, load, {
+                    passive: true,
+                    once: true
+                });
+            });
+            var idleTimer = setTimeout(load, 5000);
+        })(window, document, 'script', 'dataLayer', '<?php echo $analytics['gtmId'] ?? ''; ?>');
+    </script>
+    <!-- End Google Tag Manager -->
+<?php endif; ?>
