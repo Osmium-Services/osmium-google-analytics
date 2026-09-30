@@ -1,9 +1,13 @@
 <?php // Included via ServiceThemeBlocks::render('head', [...]) by a real theme's
 // own <head> template - see that class's doc comment. Expects $analytics
 // (this service's own config, e.g. ['enabled' => bool, 'gtmId' => string])
-// and $site (for the environment check) in the render context; $cookieConsent
-// is optional - a separate service's concern, degrades gracefully if absent.
-?>
+// and $site (for the environment check) in the render context - nothing
+// else. Consent-gating deliberately has no PHP-level dependency on a
+// consent-management service (e.g. Cookie Consent): it reads a documented
+// client-side convention instead - window.OsmiumCookieConsent.cookieName,
+// if some script on the page happens to set it - so this service and any
+// consent-management one stay independently installable, each unaware the
+// other exists. See the runtime JS below for the actual contract. ?>
 <?php
 $analyticsEnabled = $analytics['enabled'] ?? false;
 $isProduction = !\in_array($site['environment'] ?? '', ['dev', 'staging'], true);
@@ -25,16 +29,20 @@ $shouldLoad = $analyticsEnabled && $isProduction; // GA4/GTM only on production
             'ad_user_data': 'denied',
             'ad_personalization': 'denied'
         });
-        <?php if (isset($cookieConsent)): ?>
-                (function() {
-                    var m = document.cookie.match(/(?:^|; )<?php echo $cookieConsent['cookieName']; ?>=([^;]*)/);
-                    if (m && decodeURIComponent(m[1]) === 'accepted') {
-                        gtag('consent', 'update', {
-                            'analytics_storage': 'granted'
-                        });
-                    }
-                })();
-        <?php endif; ?>
+        // Consent Mode gating contract: if window.OsmiumCookieConsent.cookieName is set by
+        // whatever's on the page (no assumption about which service, if any, set it) and
+        // that cookie reads 'accepted', grant analytics_storage. Silently does nothing if
+        // no such global exists - this service works standalone either way.
+        (function() {
+            var cookieName = window.OsmiumCookieConsent && window.OsmiumCookieConsent.cookieName;
+            if (!cookieName) return;
+            var m = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
+            if (m && decodeURIComponent(m[1]) === 'accepted') {
+                gtag('consent', 'update', {
+                    'analytics_storage': 'granted'
+                });
+            }
+        })();
     </script>
     <!-- Google Tag Manager (deferred until idle or first interaction) -->
     <script>
