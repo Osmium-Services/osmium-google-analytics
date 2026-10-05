@@ -1,7 +1,7 @@
 {
     "id": "analytics",
     "name": "Google Analytics",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Google Tag Manager / GA4 loading with Consent Mode v2, gated on an admin-editable toggle and production-only",
     "category": "marketing-analytics",
     "author": {
@@ -18,6 +18,12 @@
     "autoload": [
         "models"
     ],
+
+    "csp": {
+        "script-src": ["https://www.googletagmanager.com"],
+        "connect-src": ["https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com"],
+        "frame-src": ["https://www.googletagmanager.com"]
+    },
 
     "admin": {
         "menu": {
