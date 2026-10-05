@@ -2,12 +2,11 @@
 // own <head> template - see that class's doc comment. Expects $analytics
 // (this service's own config, e.g. ['enabled' => bool, 'gtmId' => string])
 // and $site (for the environment check) in the render context - nothing
-// else. Consent-gating deliberately has no PHP-level dependency on a
-// consent-management service (e.g. Cookie Consent): it reads a documented
-// client-side convention instead - window.OsmiumCookieConsent.cookieName,
-// if some script on the page happens to set it - so this service and any
-// consent-management one stay independently installable, each unaware the
-// other exists. See the runtime JS below for the actual contract. ?>
+// else. This service requires Cookie Consent to be installed (service.json
+// requires.services), but has no PHP-level coupling to it: it reads a
+// documented client-side convention - window.OsmiumCookieConsent.cookieName
+// and the 'osmium:consent' event - so no consent class is referenced here.
+// See the runtime JS below for the actual contract. ?>
 <?php
 $analyticsEnabled = $analytics['enabled'] ?? false;
 $isProduction = !\in_array($site['environment'] ?? '', ['dev', 'staging'], true);

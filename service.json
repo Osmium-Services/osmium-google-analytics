@@ -1,8 +1,8 @@
 {
     "id": "analytics",
     "name": "Google Analytics",
-    "version": "1.0.4",
-    "description": "Google Tag Manager / GA4 loading with Consent Mode v2, gated on an admin-editable toggle and production-only",
+    "version": "1.1.0",
+    "description": "Google Tag Manager / GA4 loading with Consent Mode v2, gated on an admin-editable toggle and production-only; requires the Cookie Consent service",
     "category": "marketing-analytics",
     "author": {
         "name": "Gavin Cox"
@@ -12,7 +12,7 @@
     "requires": {
         "osmium": ">=1.0.0",
         "php": ">=8.1",
-        "services": []
+        "services": ["cookie-consent"]
     },
 
     "autoload": [
