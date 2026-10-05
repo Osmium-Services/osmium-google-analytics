@@ -43,6 +43,12 @@ $shouldLoad = $analyticsEnabled && $isProduction; // GA4/GTM only on production
                 });
             }
         })();
+        // Live update when a consent tool fires 'osmium:consent' (detail.value 'accepted' / 'rejected').
+        document.addEventListener('osmium:consent', function(e) {
+            gtag('consent', 'update', {
+                'analytics_storage': e.detail && e.detail.value === 'accepted' ? 'granted' : 'denied'
+            });
+        });
     </script>
     <!-- Google Tag Manager (deferred until idle or first interaction) -->
     <script>
