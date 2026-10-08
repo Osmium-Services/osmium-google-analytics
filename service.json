@@ -1,7 +1,7 @@
 {
-    "id": "analytics",
+    "id": "google-analytics",
     "name": "Google Analytics",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "Google Tag Manager / GA4 loading with Consent Mode v2, gated on an admin-editable toggle and production-only; requires the Cookie Consent service",
     "category": "marketing-analytics",
     "author": {
@@ -30,19 +30,19 @@
             "section": "Content",
             "items": [
                 {
-                    "id": "analytics",
+                    "id": "google-analytics",
                     "label": "Google Analytics",
                     "icon": "bx bx-bar-chart-alt-2",
-                    "route": "admin/settings/analytics",
-                    "activePattern": "admin/settings/analytics",
+                    "route": "admin/settings/google-analytics",
+                    "activePattern": "admin/settings/google-analytics",
                     "role": null
                 }
             ]
         },
         "routes": {
-            "admin/settings/analytics": {
-                "controller": "controllers/AnalyticsController.php",
-                "class": "Osmium\\Services\\Analytics\\Controllers\\AnalyticsController",
+            "admin/settings/google-analytics": {
+                "controller": "controllers/GoogleAnalyticsController.php",
+                "class": "Osmium\\Services\\GoogleAnalytics\\Controllers\\GoogleAnalyticsController",
                 "method": "index",
                 "title": "Google Analytics"
             }

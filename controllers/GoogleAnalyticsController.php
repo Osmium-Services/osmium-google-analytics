@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Osmium\Services\Analytics\Controllers;
+namespace Osmium\Services\GoogleAnalytics\Controllers;
 
 use Osmium\Modules\Admin\Core\AdminController;
-use Osmium\Services\Analytics\Models\AnalyticsConfig;
+use Osmium\Services\GoogleAnalytics\Models\GoogleAnalyticsConfig;
 
 /**
  * Analytics (GTM/GA4) settings controller - a full-page form POST/redirect
@@ -13,11 +13,11 @@ use Osmium\Services\Analytics\Models\AnalyticsConfig;
  * hardcoded settings pages it was extracted from already worked.
  *
  * Routes:
- *   - index() → /admin/settings/analytics/  (GET shows the form, POST saves it)
+ *   - index() → /admin/settings/google-analytics/  (GET shows the form, POST saves it)
  */
-class AnalyticsController extends AdminController
+class GoogleAnalyticsController extends AdminController
 {
-    private const CONFIG_FILE_PATH = 'app/config/services/analytics.json.php';
+    private const CONFIG_FILE_PATH = 'app/config/services/google-analytics.json.php';
     private const DEFAULT_CONFIG = <<<'JSON'
         <?php exit(); ?>
         {
@@ -33,20 +33,20 @@ class AnalyticsController extends AdminController
         $isPost = $this->isPost();
         if ($isPost) $this->handleSubmit();
 
-        $this->data['admin']['config']['analytics'] = (array) AnalyticsConfig::get();
-        $this->data['admin']['settingsSaved'] = $_SESSION['analytics_settings_saved'] ?? false;
-        $this->data['admin']['settingsError'] = $_SESSION['analytics_settings_error'] ?? false;
-        unset($_SESSION['analytics_settings_saved'], $_SESSION['analytics_settings_error']);
+        $this->data['admin']['config']['analytics'] = (array) GoogleAnalyticsConfig::get();
+        $this->data['admin']['settingsSaved'] = $_SESSION['google_analytics_settings_saved'] ?? false;
+        $this->data['admin']['settingsError'] = $_SESSION['google_analytics_settings_error'] ?? false;
+        unset($_SESSION['google_analytics_settings_saved'], $_SESSION['google_analytics_settings_error']);
 
-        $this->setView('analytics/index.phtml');
+        $this->setView('google-analytics/index.phtml');
     }
 
     private function handleSubmit(): void
     {
         $csrfValid = $this->admin->auth->validateCsrf();
         if (!$csrfValid) {
-            $_SESSION['analytics_settings_error'] = 'Invalid form submission. Please try again.';
-            $this->redirect('settings/analytics/');
+            $_SESSION['google_analytics_settings_error'] = 'Invalid form submission. Please try again.';
+            $this->redirect('settings/google-analytics/');
         }
 
         $enabled = isset($_POST['enabled']);
@@ -59,10 +59,10 @@ class AnalyticsController extends AdminController
             recordType: 'settings',
         );
 
-        AnalyticsConfig::clearCache();
+        GoogleAnalyticsConfig::clearCache();
 
-        $_SESSION['analytics_settings_saved'] = true;
-        $this->redirect('settings/analytics/');
+        $_SESSION['google_analytics_settings_saved'] = true;
+        $this->redirect('settings/google-analytics/');
     }
 
     private function saveConfig(bool $enabled, string $gtmId): void

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Osmium\Services\Analytics\Models;
+namespace Osmium\Services\GoogleAnalytics\Models;
 
 /**
  * Analytics (GTM/GA4) configuration helper.
@@ -13,10 +13,10 @@ namespace Osmium\Services\Analytics\Models;
  * config column - that's a schema for a future auto-generated settings UI,
  * unused here since this service ships a hand-written settings form).
  */
-class AnalyticsConfig
+class GoogleAnalyticsConfig
 {
     private static ?object $config = null;
-    private static string $configPath = 'app/config/services/analytics.json.php';
+    private static string $configPath = 'app/config/services/google-analytics.json.php';
 
     /**
      * Falls back to defaults (disabled, no GTM ID) if the config file is
