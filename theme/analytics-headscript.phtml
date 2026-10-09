@@ -16,7 +16,7 @@ $shouldLoad = $analyticsEnabled && $isProduction; // GA4/GTM only on production
     <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://www.google-analytics.com" />
     <!-- Consent Mode v2: deny analytics storage by default, restore prior consent before GTM evaluates any tag -->
-    <script>
+    <script nonce="<?= $cspNonce ?? '' ?>">
         window.dataLayer = window.dataLayer || [];
 
         function gtag() {
@@ -50,7 +50,7 @@ $shouldLoad = $analyticsEnabled && $isProduction; // GA4/GTM only on production
         });
     </script>
     <!-- Google Tag Manager (deferred until idle or first interaction) -->
-    <script>
+    <script nonce="<?= $cspNonce ?? '' ?>">
         (function(w, d, s, l, i) {
             w[l] = w[l] || [];
             w[l].push({

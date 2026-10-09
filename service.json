@@ -1,7 +1,7 @@
 {
     "id": "google-analytics",
     "name": "Google Analytics",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Google Tag Manager / GA4 loading with Consent Mode v2, gated on an admin-editable toggle and production-only; requires the Cookie Consent service",
     "category": "marketing-analytics",
     "author": {
