@@ -52,6 +52,12 @@ class GoogleAnalyticsController extends AdminController
         $enabled = isset($_POST['enabled']);
         $gtmId = \trim($_POST['gtm_id'] ?? '');
 
+        $needsValidId = $enabled || $gtmId !== '';
+        if ($needsValidId && !GoogleAnalyticsConfig::isValidGtmId($gtmId)) {
+            $_SESSION['google_analytics_settings_error'] = 'Container ID must look like GTM-ABC1234 (capital letters and digits).';
+            $this->redirect('settings/google-analytics/');
+        }
+
         $this->saveConfig($enabled, $gtmId);
 
         $this->admin->model->changelog->log(

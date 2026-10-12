@@ -10,7 +10,9 @@
 <?php
 $analyticsEnabled = $analytics['enabled'] ?? false;
 $isProduction = !\in_array($site['environment'] ?? '', ['dev', 'staging'], true);
-$shouldLoad = $analyticsEnabled && $isProduction; // GA4/GTM only on production
+$gtmId = (string) ($analytics['gtmId'] ?? '');
+$gtmIdValid = \preg_match(pattern: '/^GTM-[A-Z0-9]{4,12}$/', subject: $gtmId) === 1; // Same rule as GoogleAnalyticsConfig::isValidGtmId()
+$shouldLoad = $analyticsEnabled && $gtmIdValid && $isProduction; // GA4/GTM only on production
 ?>
 <?php if ($shouldLoad): ?>
     <link rel="preconnect" href="https://www.googletagmanager.com" />
@@ -83,7 +85,7 @@ $shouldLoad = $analyticsEnabled && $isProduction; // GA4/GTM only on production
                 });
             });
             var idleTimer = setTimeout(load, 5000);
-        })(window, document, 'script', 'dataLayer', '<?php echo $analytics['gtmId'] ?? ''; ?>');
+        })(window, document, 'script', 'dataLayer', '<?php echo \htmlspecialchars($gtmId, ENT_QUOTES); ?>');
     </script>
     <!-- End Google Tag Manager -->
 <?php endif; ?>

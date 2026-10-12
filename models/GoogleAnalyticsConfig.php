@@ -53,6 +53,15 @@ class GoogleAnalyticsConfig
         return self::$config;
     }
 
+    /**
+     * A GTM container ID is GTM- and letters or digits. The theme block prints it into an inline script, so
+     * anything else (a quote, a pasted snippet) must never be saved.
+     */
+    public static function isValidGtmId(string $gtmId): bool
+    {
+        return \preg_match(pattern: '/^GTM-[A-Z0-9]{4,12}$/', subject: $gtmId) === 1;
+    }
+
     public static function clearCache(): void
     {
         self::$config = null;
