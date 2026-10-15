@@ -1,5 +1,5 @@
 <?php // Included via ServiceThemeBlocks::render('head', [...]) by a real theme's
-// own <head> template - see that class's doc comment. Expects $analytics
+// own <head> template - see that class's doc comment. Expects $googleAnalytics
 // (this service's own config, e.g. ['enabled' => bool, 'gtmId' => string])
 // and $site (for the environment check) in the render context - nothing
 // else. This service requires Cookie Consent to be installed (service.json
@@ -8,9 +8,9 @@
 // and the 'osmium:consent' event - so no consent class is referenced here.
 // See the runtime JS below for the actual contract. ?>
 <?php
-$analyticsEnabled = $analytics['enabled'] ?? false;
+$analyticsEnabled = $googleAnalytics['enabled'] ?? false;
 $isProduction = !\in_array($site['environment'] ?? '', ['dev', 'staging'], true);
-$gtmId = (string) ($analytics['gtmId'] ?? '');
+$gtmId = (string) ($googleAnalytics['gtmId'] ?? '');
 $gtmIdValid = \preg_match(pattern: '/^GTM-[A-Z0-9]{4,12}$/', subject: $gtmId) === 1; // Same rule as GoogleAnalyticsConfig::isValidGtmId()
 $shouldLoad = $analyticsEnabled && $gtmIdValid && $isProduction; // GA4/GTM only on production
 ?>
