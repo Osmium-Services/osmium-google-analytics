@@ -1,10 +1,11 @@
 {
     "id": "google-analytics",
     "name": "Google Analytics",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "description": "Google Tag Manager / GA4 loading with Consent Mode v2, gated on an admin-editable toggle and production-only; requires the Cookie Consent service",
     "category": "marketing-analytics",
     "website": "https://marketingplatform.google.com/about/analytics/",
+    "account": {"required": "free"},
     "author": {
         "name": "Gavin Cox"
     },
