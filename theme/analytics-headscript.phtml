@@ -33,15 +33,23 @@ $shouldLoad = $analyticsEnabled && $gtmIdValid && $isProduction; // GA4/GTM only
         // Consent Mode gating contract: if window.OsmiumCookieConsent.cookieName is set by
         // whatever's on the page (no assumption about which service, if any, set it) and
         // that cookie reads 'accepted', grant analytics_storage. Silently does nothing if
-        // no such global exists - this service works standalone either way.
+        // no such global exists - this service works standalone either way. The global can
+        // be defined by a later head block, so if it is missing now, look again once the
+        // document has parsed.
         (function() {
-            var cookieName = window.OsmiumCookieConsent && window.OsmiumCookieConsent.cookieName;
-            if (!cookieName) return;
-            var m = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
-            if (m && decodeURIComponent(m[1]) === 'accepted') {
-                gtag('consent', 'update', {
-                    'analytics_storage': 'granted'
-                });
+            function restore() {
+                var cookieName = window.OsmiumCookieConsent && window.OsmiumCookieConsent.cookieName;
+                if (!cookieName) return false;
+                var m = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
+                if (m && decodeURIComponent(m[1]) === 'accepted') {
+                    gtag('consent', 'update', {
+                        'analytics_storage': 'granted'
+                    });
+                }
+                return true;
+            }
+            if (!restore()) {
+                document.addEventListener('DOMContentLoaded', restore);
             }
         })();
         // Live update when a consent tool fires 'osmium:consent' (detail.value 'accepted' / 'rejected').
