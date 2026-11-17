@@ -63,10 +63,6 @@ $shouldLoad = $analyticsEnabled && $gtmIdValid && $isProduction; // GA4/GTM only
     <script nonce="<?= $cspNonce ?? '' ?>">
         (function(w, d, s, l, i) {
             w[l] = w[l] || [];
-            w[l].push({
-                'gtm.start': new Date().getTime(),
-                event: 'gtm.js'
-            });
             var loaded = false;
 
             function load() {
@@ -74,6 +70,12 @@ $shouldLoad = $analyticsEnabled && $gtmIdValid && $isProduction; // GA4/GTM only
                     return;
                 }
                 loaded = true;
+                // Queue gtm.js here, not at parse time: the saved-consent restore above has run by now, so
+                // its 'update' sits ahead of gtm.js and tags that need analytics_storage fire on All Pages.
+                w[l].push({
+                    'gtm.start': new Date().getTime(),
+                    event: 'gtm.js'
+                });
                 var f = d.getElementsByTagName(s)[0],
                     j = d.createElement(s),
                     dl = l != 'dataLayer' ? '&l=' + l : '';
@@ -81,18 +83,27 @@ $shouldLoad = $analyticsEnabled && $gtmIdValid && $isProduction; // GA4/GTM only
                 j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
                 f.parentNode.insertBefore(j, f);
                 events.forEach(function(e) {
-                    w.removeEventListener(e, load);
+                    w.removeEventListener(e, whenParsed);
                 });
                 clearTimeout(idleTimer);
             }
+
+            // Never load before the document has parsed, so the consent restore (on DOMContentLoaded) goes first.
+            function whenParsed() {
+                if (d.readyState === 'loading') {
+                    d.addEventListener('DOMContentLoaded', load);
+                    return;
+                }
+                load();
+            }
             var events = ['scroll', 'click', 'keydown', 'touchstart', 'mousemove'];
             events.forEach(function(e) {
-                w.addEventListener(e, load, {
+                w.addEventListener(e, whenParsed, {
                     passive: true,
                     once: true
                 });
             });
-            var idleTimer = setTimeout(load, 5000);
+            var idleTimer = setTimeout(whenParsed, 5000);
         })(window, document, 'script', 'dataLayer', '<?php echo \htmlspecialchars($gtmId, ENT_QUOTES); ?>');
     </script>
     <!-- End Google Tag Manager -->
