@@ -1,6 +1,7 @@
 ---
 title: Add Google Analytics to your site
 tags: google analytics, ga4, tag manager, gtm, tracking, consent, statistics
+page: admin/settings/google-analytics
 ---
 
 **Google Analytics** loads Google Tag Manager and GA4 on your live site. It respects the visitor's cookie choice, so the **Cookie Consent** service must be installed.
